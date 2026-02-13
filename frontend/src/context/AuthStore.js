@@ -4,29 +4,37 @@ const useAuthStore = create((set) => ({
   token: null,
   user: null,
 
-  login: (token, user) =>
-    set(() => {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      return { token, user };
-    }),
+ login: (token, user) =>
+  set(() => {
+    const normalizedUser = {
+      ...user,
+      role: user.role?.toLowerCase(), // 🔥 IMPORTANT
+    };
 
-  logout: () =>
-    set(() => {
-      return { token: null, user: null };
-    }),
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(normalizedUser));
+
+    return { token, user: normalizedUser };
+  }),
+
 
   initializeAuth: () => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
+  const storedToken = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
 
-    if (storedToken) {
-      set({
-        token: storedToken,
-        user: storedUser ? JSON.parse(storedUser) : null,
-      });
-    }
-  },
+  if (storedToken && storedUser) {
+    const parsedUser = JSON.parse(storedUser);
+
+    set({
+      token: storedToken,
+      user: {
+        ...parsedUser,
+        role: parsedUser.role?.toLowerCase(), // 🔥 IMPORTANT
+      },
+    });
+  }
+},
+
 }));
 
 export default useAuthStore;

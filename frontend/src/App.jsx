@@ -1,110 +1,117 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
 
-// Layout
-import Navbar from "./components/layout/Navbar";
-
-// Pages
+// Public Pages
 import Home from "./pages/Home";
-import AdminCreateProject from "./pages/admin/AdminCreateProject";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
+// Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminProjects from "./pages/admin/AdminProjects";
 import AdminPending from "./pages/admin/AdminPending";
-import ProjectBoard from "./pages/projects/ProjectBoard";
-import ManagerDashboard from "./pages/manager/ManagerDashboard";
+import AdminCreateProject from "./pages/admin/AdminCreateProject";
+
+// Member Pages
 import MemberDashboard from "./pages/member/MemberDashboard";
 
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
+// Project Pages
+import ProjectBoard from "./pages/projects/ProjectBoard";
+import ProjectMembers from "./pages/admin/ProjectMembers";
 
-// Auth
-import useAuthStore from "./context/AuthStore";
+// Common
+import Unauthorized from "./pages/Unauthorized";
 
-// Guards
-import ProtectedRoute from "./routes/ProtectedRoute";
-import RoleRoute from "./routes/RoleRoute";
+// Guard
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 export default function App() {
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
-
-  useEffect(() => {
-    initializeAuth();
-  }, []);
-
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-900 text-white">
-        <Navbar />
+      <Routes>
+        {/* ---------- Public ---------- */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-        <Routes>
-          {/* ---------- Public Routes ---------- */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-           <Route path="/admin/projects/create" element={<AdminCreateProject />} />
+        {/* ---------- Admin ---------- */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route path="/projects/:id" element={<ProjectBoard />} />   
-          {/* ---------- Protected Role-Based Dashboards ---------- */}
-          <Route
-            path="/admin"
-            element={
-              <RoleRoute allowedRole="Admin">
-                <AdminDashboard />
-              </RoleRoute>
-            }
-          />
-          <Route
-  path="/admin/users"
-  element={
-    <RoleRoute allowedRole="Admin">
-      <AdminUsers />
-    </RoleRoute>
-  }
-/>
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/admin/projects"
-  element={
-    <RoleRoute allowedRole="Admin">
-      <AdminProjects />
-    </RoleRoute>
-  }
-/>
+        <Route
+          path="/admin/projects"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminProjects />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/admin/pending"
-  element={
-    <RoleRoute allowedRole="Admin">
-      <AdminPending />
-    </RoleRoute>
-  }
-/>
+        <Route
+          path="/admin/create-project"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminCreateProject />
+            </ProtectedRoute>
+          }
+        />
 
+        <Route
+          path="/admin/pending"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminPending />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="/manager"
-            element={
-              <RoleRoute allowedRole="Manager">
-                <ManagerDashboard />
-              </RoleRoute>
-            }
-          />
+        {/* ---------- Projects ---------- */}
+        <Route
+          path="/projects/:projectId"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "member"]}>
+              <ProjectBoard />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="/member"
-            element={
-              <RoleRoute allowedRole="Member">
-                <MemberDashboard />
-              </RoleRoute>
-            }
-          />
+        <Route
+          path="/projects/:projectId/members"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <ProjectMembers />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* ---------- Optional 404 ---------- */}
-          {/* <Route path="*" element={<NotFound />} /> */}
-        </Routes>
-      </div>
+        {/* ---------- Member ---------- */}
+        <Route
+          path="/member"
+          element={
+            <ProtectedRoute allowedRoles={["member"]}>
+              <MemberDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ---------- Unauthorized ---------- */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
+      </Routes>
     </BrowserRouter>
   );
 }

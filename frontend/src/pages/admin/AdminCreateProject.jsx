@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -19,18 +18,14 @@ export default function AdminCreateProject() {
       return;
     }
 
-    toast.success("Project Created Successfully 🚀");
+    toast.success("Project Created Successfully");
 
     // Later: Save to Backend / DB
     navigate("/admin/projects");
   };
 
   return (
-    <motion.div
-      className="min-h-screen bg-[#0B1120] text-white p-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <div className="min-h-screen bg-[#0B1120] text-white p-8">
       <h1 className="text-4xl font-extrabold bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
         Create New Project
       </h1>
@@ -98,6 +93,6 @@ export default function AdminCreateProject() {
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

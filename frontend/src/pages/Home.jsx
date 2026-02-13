@@ -17,7 +17,8 @@ export default function Home() {
   }, [token, user, navigate]);
 
   return (
-    <div className="relative h-[calc(100vh-64px)] flex items-center justify-center bg-gray-900 text-white overflow-hidden">
+    // <div className="relative h-[calc(100vh-64px)] flex items-center justify-center bg-gray-900 text-white overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center">
 
       {/* Glowing Background Elements */}
       <div className="absolute w-72 h-72 bg-blue-500 opacity-20 rounded-full blur-[120px] top-10 left-16 animate-pulse"></div>
@@ -80,7 +81,7 @@ export default function Home() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
         >
-          Admin → Manage Users  |  Manager → Create Boards  |  Member → Work on Tasks
+          Admin → Manage Users and Create Boards  |  Member → Work on Tasks
         </motion.p>
       </motion.div>
     </div>

@@ -6,10 +6,10 @@ import { useState } from "react";
 export default function AdminPending() {
 
   const allPending = [
-    { id: 1, name: "John Carter", email: "john@mail.com", role: "Manager", reason: "Needs to manage club events", requestedOn: "Jan 27, 2025" },
+    { id: 1, name: "John Carter", email: "john@mail.com", role: "Memberr", reason: "Needs to manage club events", requestedOn: "Jan 27, 2025" },
     { id: 2, name: "Emma Watson", email: "emma@mail.com", role: "Member", reason: "Joining project team", requestedOn: "Jan 26, 2025" },
     { id: 3, name: "David Wilson", email: "david@mail.com", role: "Member", reason: "Wants access to photography project", requestedOn: "Jan 25, 2025" },
-    { id: 4, name: "Sarah Lee", email: "sarah@mail.com", role: "Manager", reason: "Club leadership role", requestedOn: "Jan 22, 2025" },
+    { id: 4, name: "Sarah Lee", email: "sarah@mail.com", role: "Member", reason: "Club leadership role", requestedOn: "Jan 22, 2025" },
     { id: 5, name: "Kevin Hart", email: "kevin@mail.com", role: "Member", reason: "General participation", requestedOn: "Jan 20, 2025" },
   ];
 
@@ -34,8 +34,8 @@ export default function AdminPending() {
 
   // Role Based Rules
   const approveUser = (user) => {
-    if (user.role === "Manager") {
-      toast("⚠ Manager approval requires Admin review", { icon: "⚠️" });
+    if (user.role === "member") {
+      toast("⚠ Member approval requires Admin review", { icon: "⚠️" });
     }
 
     setPendingUsers(pendingUsers.filter(u => u.id !== user.id));
@@ -85,7 +85,7 @@ export default function AdminPending() {
           />
         </div>
 
-        <select
+        {/* <select
           className="bg-gray-800 border border-gray-700 px-4 py-2 rounded-lg outline-none"
           value={filterRole}
           onChange={(e) => {
@@ -93,10 +93,8 @@ export default function AdminPending() {
             setFilterRole(e.target.value);
           }}
         >
-          <option>All</option>
-          <option>Member</option>
-          <option>Manager</option>
-        </select>
+          All
+        </select> */}
       </div>
 
       {/* Pending List */}
@@ -107,7 +105,7 @@ export default function AdminPending() {
       >
         {displayedUsers.length === 0 ? (
           <p className="text-gray-400 text-center py-10">
-            🎉 No users matching filters.
+             No users matching filters.
           </p>
         ) : (
           displayedUsers.map(user => (

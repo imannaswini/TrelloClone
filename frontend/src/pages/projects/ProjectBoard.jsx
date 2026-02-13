@@ -1,11 +1,10 @@
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
 export default function ProjectBoard() {
-  const { id } = useParams();
+  const { projectId } = useParams(); // ✅ FIXED
 
   const [lists, setLists] = useState([
     {
@@ -92,22 +91,20 @@ export default function ProjectBoard() {
     );
   };
 
-  // ✅ DELETE LIST FUNCTION
+  // Delete List
   const deleteList = (listId) => {
     if (!window.confirm("Are you sure you want to delete this entire list?")) return;
-
     setLists(lists.filter((list) => list.id !== listId));
   };
 
   return (
     <div className="min-h-screen bg-[#0B1120] text-white p-6">
       <h1 className="text-3xl font-heading font-bold mb-4">
-        Project Board #{id}
+        Project Board #{projectId}
       </h1>
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex gap-6 overflow-x-auto pb-6">
-
           {lists.map((list) => (
             <motion.div
               key={list.id}
@@ -115,7 +112,7 @@ export default function ProjectBoard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              {/* Header + Delete List Button */}
+              {/* Header */}
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-lg font-semibold">{list.title}</h2>
 
@@ -141,13 +138,13 @@ export default function ProjectBoard() {
                       >
                         {(provided) => (
                           <div
-                            className="bg-gray-700 border border-gray-600 px-3 py-2 rounded-lg flex justify-between items-center"
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
+                            className="bg-gray-700 border border-gray-600 px-3 py-2 rounded-lg flex justify-between items-center"
                           >
                             <span>{card.text}</span>
-
+                                                                       
                             <FaTrash
                               className="text-red-400 cursor-pointer hover:text-red-500"
                               onClick={() => deleteCard(list.id, card.id)}
@@ -156,7 +153,6 @@ export default function ProjectBoard() {
                         )}
                       </Draggable>
                     ))}
-
                     {provided.placeholder}
                   </div>
                 )}
@@ -189,7 +185,6 @@ export default function ProjectBoard() {
               Create
             </button>
           </div>
-
         </div>
       </DragDropContext>
     </div>
