@@ -116,7 +116,7 @@ export default function AdminProjects() {
       animate={{ opacity: 1 }}
     >
       {/* Glow */}
-      <div className="absolute -top-16 -right-16 w-96 h-96 bg-green-500 opacity-20 blur-[150px]" />
+      <div className="absolute -top-16 -right-16 w-96 h-96 bg-green-500 opacity-20 blur-[150px] pointer-events-none -z-10" />
 
       {/* ------------------ HEADER ------------------ */}
       <div className="flex items-center justify-between mb-6">
