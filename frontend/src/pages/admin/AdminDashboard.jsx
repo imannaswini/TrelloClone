@@ -1,16 +1,73 @@
+import { useEffect, useState } from "react";
 import { FaUsers, FaProjectDiagram, FaUserClock, FaClock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import api from "../../services/api";
 import AppLayout from "../../components/layout/AppLayout";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalProjects: 0,
+    pendingApprovals: 0,
+  });
+
+  const [loading, setLoading] = useState(true);
 
   const sidebarLinks = [
     { label: "Dashboard", to: "/admin" },
     { label: "Users", to: "/admin/users" },
     { label: "Projects", to: "/admin/projects" },
     { label: "Pending", to: "/admin/pending" },
+  ];
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const res = await api.get("/admin/dashboard");
+      setStats(res.data);
+    } catch (err) {
+      toast.error("Failed to load dashboard");
+      console.error("Dashboard Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cards = [
+    {
+      title: "Total Users",
+      count: loading ? "..." : stats.totalUsers,
+      icon: <FaUsers />,
+      color: "from-blue-500 to-cyan-400",
+      border: "border-blue-500",
+      glow: "shadow-blue-500/40",
+      click: () => navigate("/admin/users"),
+    },
+    {
+      title: "Active Projects",
+      count: loading ? "..." : stats.totalProjects,
+      icon: <FaProjectDiagram />,
+      color: "from-green-500 to-emerald-400",
+      border: "border-green-500",
+      glow: "shadow-green-500/40",
+      click: () => navigate("/admin/projects"),
+    },
+    {
+      title: "Pending Approvals",
+      count: loading ? "..." : stats.pendingApprovals,
+      icon: <FaUserClock />,
+      color: "from-yellow-400 to-amber-300",
+      border: "border-yellow-500",
+      glow: "shadow-yellow-400/40",
+      click: () => navigate("/admin/pending"),
+    },
   ];
 
   return (
@@ -46,35 +103,7 @@ export default function AdminDashboard() {
           animate="visible"
           transition={{ staggerChildren: 0.2 }}
         >
-          {[
-            {
-              title: "Total Users",
-              count: "12",
-              icon: <FaUsers />,
-              color: "from-blue-500 to-cyan-400",
-              border: "border-blue-500",
-              glow: "shadow-blue-500/40",
-              click: () => navigate("/admin/users"),
-            },
-            {
-              title: "Active Projects",
-              count: "5",
-              icon: <FaProjectDiagram />,
-              color: "from-green-500 to-emerald-400",
-              border: "border-green-500",
-              glow: "shadow-green-500/40",
-              click: () => navigate("/admin/projects"),
-            },
-            {
-              title: "Pending Approvals",
-              count: "3",
-              icon: <FaUserClock />,
-              color: "from-yellow-400 to-amber-300",
-              border: "border-yellow-500",
-              glow: "shadow-yellow-400/40",
-              click: () => navigate("/admin/pending"),
-            },
-          ].map((card, i) => (
+          {cards.map((card, i) => (
             <motion.div
               key={i}
               onClick={card.click}

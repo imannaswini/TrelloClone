@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import api from "../../services/api";
 
 export default function AdminCreateProject() {
   const navigate = useNavigate();
@@ -9,19 +10,34 @@ export default function AdminCreateProject() {
     name: "",
     description: "",
     cover: "",
-    status: "Active"
+    status: "active",
   });
 
-  const handleCreate = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleCreate = async () => {
     if (!project.name.trim()) {
       toast.error("Project name is required");
       return;
     }
 
-    toast.success("Project Created Successfully");
+    try {
+      setLoading(true);
 
-    // Later: Save to Backend / DB
-    navigate("/admin/projects");
+      await api.post("/projects", {
+        name: project.name,
+        status: project.status,
+      });
+
+      toast.success("Project Created Successfully 🚀");
+
+      navigate("/admin/projects");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Creation failed");
+      console.error("Create Project Error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,14 +49,15 @@ export default function AdminCreateProject() {
       <p className="text-gray-400 mt-1">Fill details to create a project.</p>
 
       <div className="bg-gray-900 border border-gray-700 p-6 rounded-xl mt-6 space-y-4">
-
         <div>
           <label className="text-gray-400 text-sm">Project Name</label>
           <input
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 mt-1 outline-none"
             placeholder="Enter project name"
             value={project.name}
-            onChange={(e) => setProject({ ...project, name: e.target.value })}
+            onChange={(e) =>
+              setProject({ ...project, name: e.target.value })
+            }
           />
         </div>
 
@@ -51,7 +68,9 @@ export default function AdminCreateProject() {
             rows="3"
             placeholder="Project Description"
             value={project.description}
-            onChange={(e) => setProject({ ...project, description: e.target.value })}
+            onChange={(e) =>
+              setProject({ ...project, description: e.target.value })
+            }
           />
         </div>
 
@@ -61,7 +80,9 @@ export default function AdminCreateProject() {
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 mt-1 outline-none"
             placeholder="Optional"
             value={project.cover}
-            onChange={(e) => setProject({ ...project, cover: e.target.value })}
+            onChange={(e) =>
+              setProject({ ...project, cover: e.target.value })
+            }
           />
         </div>
 
@@ -70,10 +91,12 @@ export default function AdminCreateProject() {
           <select
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 mt-1 outline-none"
             value={project.status}
-            onChange={(e) => setProject({ ...project, status: e.target.value })}
+            onChange={(e) =>
+              setProject({ ...project, status: e.target.value })
+            }
           >
-            <option>Active</option>
-            <option>In Progress</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending Approval</option>
           </select>
         </div>
 
@@ -87,9 +110,10 @@ export default function AdminCreateProject() {
 
           <button
             onClick={handleCreate}
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg"
+            disabled={loading}
+            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg disabled:opacity-50"
           >
-            Create Project
+            {loading ? "Creating..." : "Create Project"}
           </button>
         </div>
       </div>

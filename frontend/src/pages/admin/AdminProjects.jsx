@@ -4,118 +4,58 @@ import {
   FaUsers,
   FaClock,
   FaTrash,
-  FaEdit,
 } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../context/AuthStore";
+import toast from "react-hot-toast";
+import api from "../../services/api";
 
 export default function AdminProjects() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
 
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      name: "SPARK Event System",
-      status: "Active",
-      updated: "2 days ago",
-      members: [
-        { id: 1, name: "John", role: "member" },
-        { id: 2, name: "Emma", role: "member" },
-        { id: 3, name: "Alex", role: "member" },
-      ],
-    },
-    {
-      id: 2,
-      name: "AI Research Board",
-      status: "Active",
-      updated: "5 days ago",
-      members: [
-        { id: 4, name: "Sarah", role: "member" },
-        { id: 5, name: "David", role: "member" },
-      ],
-    },
-  ]);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [newMember, setNewMember] = useState("");
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
-  // Editing State
-  const [editingMemberId, setEditingMemberId] = useState(null);
-  const [editData, setEditData] = useState({ name: "", role: "" });
+  const fetchProjects = async () => {
+    try {
+      const res = await api.get("/projects");
+      setProjects(res.data);
+    } catch (err) {
+      toast.error("Failed to load projects");
+      console.error("Projects Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // ------------------ ADD MEMBER ------------------
-  const addMember = () => {
-    if (!newMember.trim()) return;
+  const deleteProject = async (id) => {
+    if (!window.confirm("Delete this project?")) return;
 
-    const updated = projects.map((p) =>
-      p.id === selectedProject.id
-        ? {
-            ...p,
-            members: [
-              ...p.members,
-              {
-                id: Date.now(),
-                name: newMember,
-                role: "member",
-              },
-            ],
-          }
-        : p
+    try {
+      await api.delete(`/projects/${id}`);
+      toast.success("Project deleted");
+      fetchProjects();
+    } catch (err) {
+      toast.error("Delete failed");
+      console.error(err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0B1120] text-white flex items-center justify-center">
+        <p className="text-lg">Loading projects...</p>
+      </div>
     );
-
-    setProjects(updated);
-    setNewMember("");
-  };
-
-  // ------------------ REMOVE MEMBER ------------------
-  const removeMember = (id) => {
-    const updated = projects.map((p) =>
-      p.id === selectedProject.id
-        ? {
-            ...p,
-            members: p.members.filter((m) => m.id !== id),
-          }
-        : p
-    );
-
-    setProjects(updated);
-  };
-
-  // ------------------ START EDIT ------------------
-  const startEditing = (member) => {
-    setEditingMemberId(member.id);
-    setEditData({ name: member.name, role: member.role });
-  };
-
-  // ------------------ SAVE EDIT ------------------
-  const saveEdit = () => {
-    const updated = projects.map((p) =>
-      p.id === selectedProject.id
-        ? {
-            ...p,
-            members: p.members.map((m) =>
-              m.id === editingMemberId
-                ? { ...m, name: editData.name, role: editData.role }
-                : m
-            ),
-          }
-        : p
-    );
-
-    setProjects(updated);
-    setEditingMemberId(null);
-  };
-
-  // ------------------ CANCEL EDIT ------------------
-  const cancelEdit = () => {
-    setEditingMemberId(null);
-  };
+  }
 
   return (
     <motion.div
-      className="min-h-screen bg-[#0B1120] text-white p-8 relative overflow-hidden"
+      className="min-h-screen bg-[#0B1120] text-white p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
@@ -140,153 +80,71 @@ export default function AdminProjects() {
         Monitor, manage and review all active boards and ongoing work.
       </p>
 
+      {/* Empty State */}
+      {projects.length === 0 && (
+        <div className="text-center text-gray-400 mt-20">
+          <p>No projects found</p>
+        </div>
+      )}
+
       {/* Project Cards */}
       <div className="space-y-5">
         {projects.map((project) => (
           <motion.div
-            key={project.id}
+            key={project._id}
             className="bg-[#0F172A]/80 border border-gray-700 rounded-2xl p-6 backdrop-blur-xl"
             whileHover={{ scale: 1.02 }}
           >
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold">{project.name}</h2>
-              <span className="px-3 py-1 bg-green-600/30 text-green-400 rounded-full text-sm">
+
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  project.status === "active"
+                    ? "bg-green-600/30 text-green-400"
+                    : "bg-yellow-500/20 text-yellow-400"
+                }`}
+              >
                 {project.status}
               </span>
             </div>
 
             <div className="flex items-center justify-between mt-3 text-gray-400">
               <p className="flex items-center gap-2">
-                <FaUsers /> {project.members.length} Members
+                <FaUsers /> {project.members?.length || 0} Members
               </p>
+
               <p className="flex items-center gap-2">
-                <FaClock /> Updated {project.updated}
+                <FaClock /> Updated{" "}
+                {new Date(project.updatedAt).toLocaleDateString()}
               </p>
             </div>
 
             <div className="flex gap-3 mt-5">
               <button
-                onClick={() => navigate(`/projects/${project.id}`)}
+                onClick={() => navigate(`/projects/${project._id}`)}
                 className="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded-lg transition"
               >
                 View Board
               </button>
 
               <button
-                onClick={() => setSelectedProject(project)}
+                onClick={() => navigate(`/admin/projects/${project._id}`)}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition"
               >
                 Manage Members
+              </button>
+
+              <button
+                onClick={() => deleteProject(project._id)}
+                className="px-4 bg-red-600 hover:bg-red-700 rounded-lg transition"
+              >
+                <FaTrash />
               </button>
             </div>
           </motion.div>
         ))}
       </div>
-
-      {/* ================= MEMBER MODAL ================= */}
-      {selectedProject && (
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-          <div className="bg-gray-900 p-6 rounded-2xl border border-gray-700 w-[520px]">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">
-                Members — {selectedProject.name}
-              </h2>
-
-              <button
-                className="bg-red-600 px-3 py-1 rounded-lg"
-                onClick={() => setSelectedProject(null)}
-              >
-                Close
-              </button>
-            </div>
-
-            <div className="mt-4 space-y-3">
-              {selectedProject.members.map((m) => (
-                <div
-                  key={m.id}
-                  className="flex justify-between items-center bg-gray-800 px-3 py-2 rounded-lg"
-                >
-                  {editingMemberId === m.id ? (
-                    <>
-                      <div className="flex gap-2 flex-1">
-                        <input
-                          value={editData.name}
-                          onChange={(e) =>
-                            setEditData({ ...editData, name: e.target.value })
-                          }
-                          className="bg-gray-700 px-2 py-1 rounded w-1/2"
-                        />
-                        <select
-                          value={editData.role}
-                          onChange={(e) =>
-                            setEditData({ ...editData, role: e.target.value })
-                          }
-                          className="bg-gray-700 px-2 py-1 rounded w-1/2"
-                        >
-                          <option value="member">member</option>
-                          <option value="admin">admin</option>
-                        </select>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <button
-                          onClick={saveEdit}
-                          className="text-green-400"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={cancelEdit}
-                          className="text-gray-400"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <p className="font-semibold">{m.name}</p>
-                        <p className="text-blue-400 text-sm">{m.role}</p>
-                      </div>
-
-                      <div className="flex gap-4 items-center">
-                        <FaEdit
-                          className="cursor-pointer text-yellow-400"
-                          onClick={() => startEditing(m)}
-                        />
-
-                        {user?.role === "admin" && (
-                          <FaTrash
-                            className="cursor-pointer text-red-400"
-                            onClick={() => removeMember(m.id)}
-                          />
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Add Member */}
-            <div className="mt-4">
-              <input
-                value={newMember}
-                onChange={(e) => setNewMember(e.target.value)}
-                placeholder="Enter member name"
-                className="w-full bg-gray-800 px-3 py-2 rounded-lg"
-              />
-              <button
-                onClick={addMember}
-                className="w-full bg-green-600 hover:bg-green-700 mt-3 py-2 rounded-lg"
-              >
-                Add Member
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </motion.div>
   );
 }

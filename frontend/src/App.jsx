@@ -24,6 +24,9 @@ import Unauthorized from "./pages/Unauthorized";
 
 // Guard
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
+
+<Toaster position="top-right" />
 
 export default function App() {
   return (
@@ -108,10 +111,12 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        
 
         {/* ---------- Unauthorized ---------- */}
         <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </BrowserRouter>
+    
   );
 }
