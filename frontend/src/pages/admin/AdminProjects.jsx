@@ -4,9 +4,9 @@ import {
   FaUsers,
   FaClock,
   FaTrash,
+  FaEdit,
 } from "react-icons/fa";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../context/AuthStore";
 
@@ -38,40 +38,16 @@ export default function AdminProjects() {
     },
   ]);
 
-  /* ------------------ STATE ------------------ */
-  const [showModal, setShowModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [newMember, setNewMember] = useState("");
 
-  const [newProject, setNewProject] = useState({
-    name: "",
-    status: "Active",
-  });
+  // Editing State
+  const [editingMemberId, setEditingMemberId] = useState(null);
+  const [editData, setEditData] = useState({ name: "", role: "" });
 
-  /* ------------------ CREATE PROJECT ------------------ */
-  const handleCreateProject = () => {
-    if (!newProject.name.trim()) {
-      toast.error("Project name is required");
-      return;
-    }
-
-    const project = {
-      id: Date.now(),
-      name: newProject.name,
-      status: newProject.status,
-      updated: "Just now",
-      members: [],
-    };
-
-    setProjects([project, ...projects]);
-    setShowModal(false);
-    setNewProject({ name: "", status: "Active" });
-    toast.success("Project Created Successfully 🚀");
-  };
-
-  /* ------------------ ADD MEMBER ------------------ */
+  // ------------------ ADD MEMBER ------------------
   const addMember = () => {
-    if (!newMember.trim()) return toast.error("Enter member name");
+    if (!newMember.trim()) return;
 
     const updated = projects.map((p) =>
       p.id === selectedProject.id
@@ -91,10 +67,9 @@ export default function AdminProjects() {
 
     setProjects(updated);
     setNewMember("");
-    toast.success("Member Added");
   };
 
-  /* ------------------ REMOVE MEMBER ------------------ */
+  // ------------------ REMOVE MEMBER ------------------
   const removeMember = (id) => {
     const updated = projects.map((p) =>
       p.id === selectedProject.id
@@ -106,7 +81,36 @@ export default function AdminProjects() {
     );
 
     setProjects(updated);
-    toast.success("Member Removed");
+  };
+
+  // ------------------ START EDIT ------------------
+  const startEditing = (member) => {
+    setEditingMemberId(member.id);
+    setEditData({ name: member.name, role: member.role });
+  };
+
+  // ------------------ SAVE EDIT ------------------
+  const saveEdit = () => {
+    const updated = projects.map((p) =>
+      p.id === selectedProject.id
+        ? {
+            ...p,
+            members: p.members.map((m) =>
+              m.id === editingMemberId
+                ? { ...m, name: editData.name, role: editData.role }
+                : m
+            ),
+          }
+        : p
+    );
+
+    setProjects(updated);
+    setEditingMemberId(null);
+  };
+
+  // ------------------ CANCEL EDIT ------------------
+  const cancelEdit = () => {
+    setEditingMemberId(null);
   };
 
   return (
@@ -115,10 +119,7 @@ export default function AdminProjects() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      {/* Glow */}
-      <div className="absolute -top-16 -right-16 w-96 h-96 bg-green-500 opacity-20 blur-[150px] pointer-events-none -z-10" />
-
-      {/* ------------------ HEADER ------------------ */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <FaProjectDiagram className="text-green-400 text-3xl" />
@@ -127,31 +128,24 @@ export default function AdminProjects() {
           </h1>
         </div>
 
-        {/* ✅ FIXED BUTTON */}
-       <button
-  onClick={() => navigate("/admin/create-project")}
-  className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg shadow-lg hover:shadow-green-500/40 transition"
->
-  + Create Project
-</button>
-
+        <button
+          onClick={() => navigate("/admin/create-project")}
+          className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg shadow-lg transition"
+        >
+          + Create Project
+        </button>
       </div>
 
       <p className="text-gray-400 mb-6">
         Monitor, manage and review all active boards and ongoing work.
       </p>
 
-      {/* ------------------ PROJECT CARDS ------------------ */}
-      <motion.div
-        className="space-y-5"
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
+      {/* Project Cards */}
+      <div className="space-y-5">
         {projects.map((project) => (
           <motion.div
             key={project.id}
-            className="bg-[#0F172A]/80 border border-gray-700 rounded-2xl p-6 backdrop-blur-xl hover:border-green-500 transition hover:shadow-green-400/30 shadow"
+            className="bg-[#0F172A]/80 border border-gray-700 rounded-2xl p-6 backdrop-blur-xl"
             whileHover={{ scale: 1.02 }}
           >
             <div className="flex justify-between items-center">
@@ -187,85 +181,112 @@ export default function AdminProjects() {
             </div>
           </motion.div>
         ))}
-      </motion.div>
+      </div>
 
-      {/* ================= MEMBER MANAGEMENT MODAL ================= */}
+      {/* ================= MEMBER MODAL ================= */}
       {selectedProject && (
-        <motion.div
-          className="fixed inset-0 bg-black/70 backdrop-blur flex justify-center items-center z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <motion.div
-            className="bg-gray-900 p-6 rounded-2xl border border-gray-700 w-[520px]"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-          >
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
+          <div className="bg-gray-900 p-6 rounded-2xl border border-gray-700 w-[520px]">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">
                 Members — {selectedProject.name}
               </h2>
 
               <button
-                className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-lg"
+                className="bg-red-600 px-3 py-1 rounded-lg"
                 onClick={() => setSelectedProject(null)}
               >
                 Close
               </button>
             </div>
 
-            <div className="max-h-60 overflow-y-auto mt-4 space-y-2">
+            <div className="mt-4 space-y-3">
               {selectedProject.members.map((m) => (
                 <div
                   key={m.id}
                   className="flex justify-between items-center bg-gray-800 px-3 py-2 rounded-lg"
                 >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${m.name}`}
-                      className="w-9 h-9 rounded-full border border-gray-600"
-                    />
-                    <div>
-                      <p className="font-semibold">{m.name}</p>
-                      <span className="text-blue-400 text-xs">
-                        {m.role}
-                      </span>
-                    </div>
-                  </div>
+                  {editingMemberId === m.id ? (
+                    <>
+                      <div className="flex gap-2 flex-1">
+                        <input
+                          value={editData.name}
+                          onChange={(e) =>
+                            setEditData({ ...editData, name: e.target.value })
+                          }
+                          className="bg-gray-700 px-2 py-1 rounded w-1/2"
+                        />
+                        <select
+                          value={editData.role}
+                          onChange={(e) =>
+                            setEditData({ ...editData, role: e.target.value })
+                          }
+                          className="bg-gray-700 px-2 py-1 rounded w-1/2"
+                        >
+                          <option value="member">member</option>
+                          <option value="admin">admin</option>
+                        </select>
+                      </div>
 
-                  {user?.role === "admin" && (
-                    <button
-                      className="text-red-400 hover:text-red-500"
-                      onClick={() => removeMember(m.id)}
-                    >
-                      <FaTrash />
-                    </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={saveEdit}
+                          className="text-green-400"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={cancelEdit}
+                          className="text-gray-400"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <p className="font-semibold">{m.name}</p>
+                        <p className="text-blue-400 text-sm">{m.role}</p>
+                      </div>
+
+                      <div className="flex gap-4 items-center">
+                        <FaEdit
+                          className="cursor-pointer text-yellow-400"
+                          onClick={() => startEditing(m)}
+                        />
+
+                        {user?.role === "admin" && (
+                          <FaTrash
+                            className="cursor-pointer text-red-400"
+                            onClick={() => removeMember(m.id)}
+                          />
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
               ))}
             </div>
 
-            {user?.role === "admin" && (
-              <div className="mt-4">
-                <input
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
-                  placeholder="Enter member name"
-                  value={newMember}
-                  onChange={(e) => setNewMember(e.target.value)}
-                />
-                <button
-                  onClick={addMember}
-                  className="w-full bg-green-600 hover:bg-green-700 mt-3 py-2 rounded-lg"
-                >
-                  Add Member
-                </button>
-              </div>
-            )}
-          </motion.div>
-        </motion.div>
+            {/* Add Member */}
+            <div className="mt-4">
+              <input
+                value={newMember}
+                onChange={(e) => setNewMember(e.target.value)}
+                placeholder="Enter member name"
+                className="w-full bg-gray-800 px-3 py-2 rounded-lg"
+              />
+              <button
+                onClick={addMember}
+                className="w-full bg-green-600 hover:bg-green-700 mt-3 py-2 rounded-lg"
+              >
+                Add Member
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-
-     
-  </motion.div>
+    </motion.div>
   );
 }
