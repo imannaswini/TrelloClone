@@ -16,11 +16,12 @@ const taskSchema = new mongoose.Schema(
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      default: null,
     },
 
     status: {
       type: String,
-      enum: ["todo", "progress", "done"],
+      enum: ["todo", "progress", "completed"], // ✅ FIXED
       default: "todo",
     },
   },
