@@ -15,7 +15,6 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
- 
     if (!email.trim() || !password.trim()) {
       toast.error("Please enter email & password");
       return;
@@ -23,13 +22,10 @@ export default function Login() {
 
     try {
       const res = await api.post("/auth/login", {
-  email,
-  password,
-  role: role.toLowerCase(), 
-});
+        email,
+        password,
+      });
 
-
-      
       if (!res.data?.token || !res.data?.user) {
         toast.error("Invalid server response");
         return;
@@ -39,10 +35,11 @@ export default function Login() {
 
       toast.success("Login Successful 🚀");
 
-      navigate(role === "admin" ? "/admin" : "/member");
-    } catch (err) {
-      console.error("LOGIN ERROR:", err);
+      navigate(
+        res.data.user.role === "admin" ? "/admin" : "/member"
+      );
 
+    } catch (err) {
       toast.error(
         err.response?.data?.message ||
         err.message ||
@@ -66,7 +63,6 @@ export default function Login() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
         />
 
         <input
@@ -75,17 +71,7 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
         />
-
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="w-full p-3 rounded bg-slate-800"
-        >
-          <option value="admin">Admin</option>
-          <option value="member">Member</option>
-        </select>
 
         <button className="w-full bg-blue-600 py-3 rounded hover:bg-blue-700 transition">
           Login

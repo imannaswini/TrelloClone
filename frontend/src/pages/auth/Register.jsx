@@ -16,35 +16,45 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     if (loading) return;
+
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      toast.error("Please fill all fields");
+      return;
+    }
 
     setLoading(true);
 
     try {
-      
       const res = await api.post("/auth/register", {
-  name,
-  email,
-  password,
-  role: role.toLowerCase(), // 
-});
+        name,
+        email,
+        password,
+        role: role.toLowerCase(),
+      });
 
+      // ✅ ADMIN → auto login
+      if (res.data.token && res.data.user) {
+        login(res.data.token, res.data.user);
+        toast.success("Admin account created 🚀");
+        navigate("/admin");
+        return;
+      }
 
-      login(res.data.token, res.data.user);
+      // ✅ MEMBER → show approval message
+      toast.success(res.data.message || "Registered successfully");
 
-      toast.success("Account Created ");
+      if (role === "member") {
+        toast("Wait for admin approval ⏳", { icon: "⏳" });
+        navigate("/login");
+      }
 
-      navigate(role === "admin" ? "/admin" : "/member");
     } catch (err) {
       const message = err.response?.data?.message;
 
       if (message === "User already exists") {
-        toast.error("Email already registered. Redirecting to login 👀");
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 1200);
+        toast.error("Email already registered");
+        navigate("/login");
       } else {
         toast.error(message || "Registration failed");
       }
@@ -68,7 +78,6 @@ export default function Register() {
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required
         />
 
         <input
@@ -76,7 +85,6 @@ export default function Register() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
         />
 
         <input
@@ -85,7 +93,6 @@ export default function Register() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
         />
 
         <select

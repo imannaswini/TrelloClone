@@ -1,36 +1,34 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// Public Pages
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
-// Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminProjects from "./pages/admin/AdminProjects";
 import AdminPending from "./pages/admin/AdminPending";
 import AdminCreateProject from "./pages/admin/AdminCreateProject";
+import AdminCreateTask from "./pages/admin/AdminCreateTask";
 
-// Member Pages
 import MemberDashboard from "./pages/member/MemberDashboard";
+import MemberTasks from "./pages/member/MemberTasks";
 
-// Project Pages
 import ProjectBoard from "./pages/projects/ProjectBoard";
 import ProjectMembers from "./pages/admin/ProjectMembers";
 
-// Common
+import AdminTasks from "./pages/admin/AdminTasks";
+
 import Unauthorized from "./pages/Unauthorized";
 
-// Guard
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
-
-<Toaster position="top-right" />
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" />
+
       <Routes>
         {/* ---------- Public ---------- */}
         <Route path="/" element={<Home />} />
@@ -64,6 +62,16 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+      
+         <Route
+  path="/admin/tasks"
+  element={
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <AdminTasks />
+    </ProtectedRoute>
+  }
+/>
+
 
         <Route
           path="/admin/create-project"
@@ -79,6 +87,15 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <AdminPending />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/create-task"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminCreateTask />
             </ProtectedRoute>
           }
         />
@@ -111,12 +128,19 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        
+        <Route
+  path="/member/tasks"
+  element={
+    <ProtectedRoute allowedRoles={["member"]}>
+      <MemberTasks />
+    </ProtectedRoute>
+  }
+/>
+
 
         {/* ---------- Unauthorized ---------- */}
         <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </BrowserRouter>
-    
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaUsers, FaProjectDiagram, FaUserClock, FaClock } from "react-icons/fa";
+import { FaUsers, FaProjectDiagram, FaUserClock, FaClock, FaAd, FaHistory } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -13,6 +13,7 @@ export default function AdminDashboard() {
     totalUsers: 0,
     totalProjects: 0,
     pendingApprovals: 0,
+    totalTasks: 0, // ✅ NEW
   });
 
   const [loading, setLoading] = useState(true);
@@ -22,6 +23,8 @@ export default function AdminDashboard() {
     { label: "Users", to: "/admin/users" },
     { label: "Projects", to: "/admin/projects" },
     { label: "Pending", to: "/admin/pending" },
+    { label: "Create Task", to: "/admin/create-task" },
+    { label: "Tasks", to: "/admin/tasks" },
   ];
 
   useEffect(() => {
@@ -45,7 +48,6 @@ export default function AdminDashboard() {
       title: "Total Users",
       count: loading ? "..." : stats.totalUsers,
       icon: <FaUsers />,
-      color: "from-blue-500 to-cyan-400",
       border: "border-blue-500",
       glow: "shadow-blue-500/40",
       click: () => navigate("/admin/users"),
@@ -54,7 +56,6 @@ export default function AdminDashboard() {
       title: "Active Projects",
       count: loading ? "..." : stats.totalProjects,
       icon: <FaProjectDiagram />,
-      color: "from-green-500 to-emerald-400",
       border: "border-green-500",
       glow: "shadow-green-500/40",
       click: () => navigate("/admin/projects"),
@@ -63,10 +64,25 @@ export default function AdminDashboard() {
       title: "Pending Approvals",
       count: loading ? "..." : stats.pendingApprovals,
       icon: <FaUserClock />,
-      color: "from-yellow-400 to-amber-300",
       border: "border-yellow-500",
       glow: "shadow-yellow-400/40",
       click: () => navigate("/admin/pending"),
+    },
+    {
+      title: "Create Tasks",
+      count: "+",
+      icon: <FaClock />,
+      border: "border-purple-500",
+      glow: "shadow-purple-500/40",
+      click: () => navigate("/admin/create-task"),
+    },
+    {
+      title: "Total Tasks",
+      count: loading ? "..." : stats.totalTasks,
+      icon: <FaHistory />,
+      border: "border-pink-500",
+      glow: "shadow-pink-500/40",
+      click: () => navigate("/admin/tasks"),
     },
   ];
 
@@ -111,7 +127,7 @@ export default function AdminDashboard() {
                 hidden: { opacity: 0, scale: 0.8, y: 30 },
                 visible: { opacity: 1, scale: 1, y: 0 },
               }}
-              whileHover={{ scale: 1.06, rotate: 0.5 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               className={`
                 cursor-pointer relative p-7 rounded-2xl
@@ -121,52 +137,16 @@ export default function AdminDashboard() {
                 transition duration-300
               `}
             >
-              <div
-                className={`
-                  absolute top-0 right-0 w-24 h-24 opacity-10 blur-2xl
-                  bg-gradient-to-r ${card.color} rounded-full
-                `}
-              />
-
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">{card.title}</h2>
                 <div className="text-3xl">{card.icon}</div>
               </div>
 
-              <p className="text-5xl font-extrabold mt-3 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+              <p className="text-5xl font-extrabold mt-3 text-white">
                 {card.count}
-              </p>
-
-              <p className="text-gray-400 text-sm mt-1">
-                Click to view details
               </p>
             </motion.div>
           ))}
-        </motion.div>
-
-        {/* Recent Activity */}
-        <motion.div
-          className="mt-12 p-7 rounded-2xl border border-gray-700 bg-[#0F172A]/80 backdrop-blur-xl"
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-2">
-            <FaClock className="text-blue-400 text-xl" />
-            <h2 className="text-xl font-semibold">Recent Activity</h2>
-          </div>
-
-          <ul className="mt-4 text-gray-300 space-y-2 text-sm">
-            <motion.li whileHover={{ x: 6 }}>
-              • Manager created a new board
-            </motion.li>
-            <motion.li whileHover={{ x: 6 }}>
-              • Admin approved 2 members
-            </motion.li>
-            <motion.li whileHover={{ x: 6 }}>
-              • Project “SPARK System” updated
-            </motion.li>
-          </ul>
         </motion.div>
       </motion.div>
     </AppLayout>

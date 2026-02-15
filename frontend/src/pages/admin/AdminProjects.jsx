@@ -59,11 +59,10 @@ export default function AdminProjects() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <FaProjectDiagram className="text-green-400 text-3xl" />
-          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold bg-linear-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
             Active Projects
           </h1>
         </div>
@@ -80,14 +79,6 @@ export default function AdminProjects() {
         Monitor, manage and review all active boards and ongoing work.
       </p>
 
-      {/* Empty State */}
-      {projects.length === 0 && (
-        <div className="text-center text-gray-400 mt-20">
-          <p>No projects found</p>
-        </div>
-      )}
-
-      {/* Project Cards */}
       <div className="space-y-5">
         {projects.map((project) => (
           <motion.div
@@ -128,8 +119,11 @@ export default function AdminProjects() {
                 View Board
               </button>
 
+              {/* ✅ FIXED ROUTE */}
               <button
-                onClick={() => navigate(`/admin/projects/${project._id}`)}
+                onClick={() =>
+                  navigate(`/projects/${project._id}/members`)
+                }
                 className="flex-1 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition"
               >
                 Manage Members

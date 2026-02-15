@@ -1,15 +1,15 @@
 import { create } from "zustand";
 
 const useAuthStore = create((set) => ({
-  token: null,
-  user: null,
+  token: localStorage.getItem("token") || null,
+  user: JSON.parse(localStorage.getItem("user")) || null,
 
   // ✅ LOGIN
   login: (token, user) =>
     set(() => {
       const normalizedUser = {
         ...user,
-        role: user.role?.toLowerCase(), // 🔥 IMPORTANT
+        role: user.role?.toLowerCase(),
       };
 
       localStorage.setItem("token", token);
@@ -27,7 +27,7 @@ const useAuthStore = create((set) => ({
       return { token: null, user: null };
     }),
 
-  // ✅ INITIALIZE AUTH (on refresh)
+  // ✅ INITIALIZE AUTH (optional safety)
   initializeAuth: () => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -39,7 +39,7 @@ const useAuthStore = create((set) => ({
         token: storedToken,
         user: {
           ...parsedUser,
-          role: parsedUser.role?.toLowerCase(), // 🔥 IMPORTANT
+          role: parsedUser.role?.toLowerCase(),
         },
       });
     }
