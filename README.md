@@ -38,20 +38,22 @@ The platform allows users to **create, manage, and track tasks across different 
 ```
 
 ## 📂 Project Structure
- TrelloClone
+
+```
+TrelloClone
 │
 ├── frontend
-│ ├── components
-│ ├── pages
-│ └── styles
+│   ├── components
+│   ├── pages
+│   └── styles
 │
 ├── backend
-│ ├── models
-│ ├── routes
-│ └── controllers
+│   ├── models
+│   ├── routes
+│   └── controllers
 │
 └── README.md
-
+```
 
 ```
 
