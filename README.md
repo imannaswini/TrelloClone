@@ -38,7 +38,7 @@ The platform allows users to **create, manage, and track tasks across different 
 ```
 
 ## 📂 Project Structure
-TrelloClone
+ TrelloClone
 │
 ├── frontend
 │ ├── components
