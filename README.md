@@ -37,19 +37,21 @@ The platform allows users to **create, manage, and track tasks across different 
 
 ```
 
-#TrelloClone
+## 📂 Project Structure
+TrelloClone
 │
 ├── frontend
-│   ├── components
-│   ├── pages
-│   └── styles
+│ ├── components
+│ ├── pages
+│ └── styles
 │
 ├── backend
-│   ├── models
-│   ├── routes
-│   └── controllers
+│ ├── models
+│ ├── routes
+│ └── controllers
 │
 └── README.md
+
 
 ```
 
@@ -157,9 +159,3 @@ LinkedIn: https://www.linkedin.com/in/mannaswini
 ```
 
 ---
-
-✅ This version is **clean, professional, and recruiter-friendly** — no screenshots needed.
-
----
-
-If you want, I can also help you with **one last GitHub improvement** that will make your **profile look much more professional to recruiters** (takes only **2 minutes**).
