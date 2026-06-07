@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import api from "../../services/api";
+import api from "../../api/axios";
 
 export default function PendingApprovals() {
   const [users, setUsers] = useState([]);

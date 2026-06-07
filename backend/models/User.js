@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
       default: "member",
     },
 
-    // ✅ Pending Approval System
+    // Pending Approval System
     status: {
       type: String,
       enum: ["pending", "approved"],

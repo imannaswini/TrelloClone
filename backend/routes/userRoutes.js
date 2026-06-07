@@ -5,9 +5,9 @@ import authorize from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-console.log("✅ User routes loaded");
+console.log("User routes loaded");
 
-// ✅ GET ALL USERS
+//  GET ALL USERS
 router.get("/", protect, authorize("admin"), async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -17,7 +17,7 @@ router.get("/", protect, authorize("admin"), async (req, res) => {
   }
 });
 
-// ✅ GET PENDING USERS
+//  GET PENDING USERS
 router.get("/pending", protect, authorize("admin"), async (req, res) => {
   try {
     const users = await User.find({ status: "pending" }).select("-password");
@@ -27,9 +27,13 @@ router.get("/pending", protect, authorize("admin"), async (req, res) => {
   }
 });
 
-// ✅ APPROVE USER
+// APPROVE USER
 router.put("/:id/approve", protect, authorize("admin"), async (req, res) => {
   try {
+    if (req.user.id === req.params.id) {
+      return res.status(403).json({ message: "You cannot approve your own account" });
+    }
+
     const user = await User.findById(req.params.id);
 
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -43,7 +47,28 @@ router.put("/:id/approve", protect, authorize("admin"), async (req, res) => {
   }
 });
 
-// ✅ REJECT USER (optional)
+// PROMOTE TO ADMIN
+router.put("/:id/promote-admin", protect, authorize("admin"), async (req, res) => {
+  try {
+    if (req.user.id === req.params.id) {
+      return res.status(403).json({ message: "You cannot promote your own account" });
+    }
+
+    const user = await User.findById(req.params.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.role = "admin";
+    user.status = "approved"; // automatically approve if promoted
+    await user.save();
+
+    res.json({ message: "User promoted to Admin successfully" });
+  } catch {
+    res.status(500).json({ message: "Promotion failed" });
+  }
+});
+
+//  REJECT USER (optional)
 router.delete("/:id/reject", protect, authorize("admin"), async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);

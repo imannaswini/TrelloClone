@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // ⬅️ change when backend ready
-  withCredentials: true,                 // allow cookies if used
-  timeout: 10000,                        // 10s timeout
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  withCredentials: true,
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -28,10 +28,11 @@ API.interceptors.response.use(
     if (error.response) {
       console.error("API Error:", error.response.data?.message);
 
-      // Token expired → logout automatically later if needed
+      // Token expired or invalid → clear auth state
       if (error.response.status === 401) {
         localStorage.removeItem("token");
-        // window.location.href = "/login";  // enable later if needed
+        localStorage.removeItem("user");
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);

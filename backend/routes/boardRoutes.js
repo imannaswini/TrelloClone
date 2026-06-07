@@ -4,9 +4,9 @@ import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-console.log("✅ Board routes loaded");
+console.log(" Board routes loaded");
 
-// ✅ GET BOARD BY PROJECT
+// GET BOARD BY PROJECT
 router.get("/:projectId", protect, async (req, res) => {
   try {
     let board = await Board.findOne({ projectId: req.params.projectId });
@@ -29,7 +29,7 @@ router.get("/:projectId", protect, async (req, res) => {
   }
 });
 
-// ✅ UPDATE BOARD
+// UPDATE BOARD
 router.put("/:projectId", protect, async (req, res) => {
   try {
     const { lists } = req.body;

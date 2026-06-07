@@ -4,10 +4,10 @@ import Task from "../models/Task.js";
 
 const router = express.Router();
 
-console.log("✅ Member routes loaded");
+console.log(" Member routes loaded");
 
 
-// ✅ MEMBER DASHBOARD STATS
+//  MEMBER DASHBOARD STATS
 router.get("/dashboard", protect, async (req, res) => {
   try {
     if (!req.user?.id) {
@@ -45,7 +45,7 @@ router.get("/dashboard", protect, async (req, res) => {
 });
 
 
-// ✅ MEMBER TASKS
+//  MEMBER TASKS
 router.get("/tasks", protect, async (req, res) => {
   try {
     if (!req.user?.id) {
@@ -65,7 +65,7 @@ router.get("/tasks", protect, async (req, res) => {
     res.json(tasks);
 
   } catch (err) {
-    console.error("🔥 Member Tasks Error:", err);
+    console.error(" Member Tasks Error:", err);
     res.status(500).json({ message: "Failed to load tasks" });
   }
 });

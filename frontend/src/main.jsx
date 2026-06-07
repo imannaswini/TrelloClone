@@ -4,7 +4,7 @@ import App from "./App";
 import "./index.css";
 import useAuthStore from "./context/AuthStore";
 
-useAuthStore.getState().initializeAuth(); // ✅ VERY IMPORTANT
+useAuthStore.getState().initializeAuth();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

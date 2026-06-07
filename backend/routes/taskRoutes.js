@@ -5,10 +5,10 @@ import authorize from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-console.log("✅ Task routes loaded");
+console.log("Task routes loaded");
 
 
-// ✅ CREATE TASK (Admin)
+// CREATE TASK (Admin)
 router.post("/", protect, authorize("admin"), async (req, res) => {
   try {
     const { title, projectId, assignedTo } = req.body;
@@ -31,7 +31,7 @@ router.post("/", protect, authorize("admin"), async (req, res) => {
 });
 
 
-// ✅ GET ALL TASKS (Admin Dashboard)
+//  GET ALL TASKS (Admin Dashboard)
 router.get("/", protect, authorize("admin"), async (req, res) => {
   try {
     const tasks = await Task.find()
@@ -46,7 +46,7 @@ router.get("/", protect, authorize("admin"), async (req, res) => {
 });
 
 
-// ✅ GET TASKS BY PROJECT
+// GET TASKS BY PROJECT
 router.get("/project/:projectId", protect, async (req, res) => {
   try {
     const tasks = await Task.find({ project: req.params.projectId })
@@ -60,7 +60,7 @@ router.get("/project/:projectId", protect, async (req, res) => {
 });
 
 
-// ✅ UPDATE TASK (Status / Assigned Member)
+// UPDATE TASK (Status / Assigned Member)
 router.put("/:id", protect, async (req, res) => {
   try {
     const { status, assignedTo } = req.body;
@@ -81,7 +81,7 @@ router.put("/:id", protect, async (req, res) => {
 });
 
 
-// ✅ DELETE TASK (Admin)
+// DELETE TASK (Admin)
 router.delete("/:id", protect, authorize("admin"), async (req, res) => {
   try {
     console.log("🗑 Deleting task:", req.params.id);

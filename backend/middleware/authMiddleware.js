@@ -12,7 +12,7 @@ const protect = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // ✅ Normalize user object
+    // Normalize user object
     req.user = {
       id: decoded.id || decoded._id,   // 🔥 Handles both cases
       role: decoded.role,
