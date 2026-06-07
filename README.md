@@ -8,7 +8,7 @@ The platform allows users to **create, manage, and track tasks across different 
 
 ---
 
-## 🚀 Key Features
+##  Key Features
 
 - **Task Management**: Create, update, and delete tasks easily.
 - **Kanban Board**: Interactive Kanban-style task board for workflow management.
@@ -19,7 +19,7 @@ The platform allows users to **create, manage, and track tasks across different 
 
 ---
 
-## 💻 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |------|------------|
@@ -31,7 +31,7 @@ The platform allows users to **create, manage, and track tasks across different 
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 TrelloClone
@@ -51,7 +51,7 @@ TrelloClone
 
 ---
 
-## 📖 Overview
+## Overview
 
 SPARK is designed to simplify **project and task management** by providing an intuitive Kanban-style interface similar to Trello.
 
@@ -68,23 +68,31 @@ This visual workflow helps teams **track progress efficiently and manage project
 
 Here is a glimpse of the different views and components available in SPARK. *(Note: Ensure the images are placed in a `screenshots` folder in the root directory)*
 
-### 🔐 Authentication
-![Login & Signup](./screenshots/Loginsignup.png)
+###  Authentication
+![Login & Signup](<img width="1920" height="1080" alt="Loginsignup" src="https://github.com/user-attachments/assets/7fd3ba79-4e19-4408-8b39-ef23a2d76c9e" />
+)
 
-### 👑 Admin Views
-![Admin Dashboard](./screenshots/admin_dashboard.png)
-![Users Management](./screenshots/users.png)
-![Projects Overview](./screenshots/project.png)
-![Pending Approvals](./screenshots/pending_approvals.png)
-![Task Management](./screenshots/task.png)
+###  Admin Views
+![Admin Dashboard](<img width="1920" height="1080" alt="admin_dashboard" src="https://github.com/user-attachments/assets/88637f3b-9640-4b09-8baa-9037209be3c9" />
+)
+![Users Management](<img width="1920" height="1080" alt="users" src="https://github.com/user-attachments/assets/2c123229-ba52-417b-9478-3f8ec40cf8c2" />
+)
+![Projects Overview](<img width="1920" height="1080" alt="project" src="https://github.com/user-attachments/assets/186763f3-3166-4163-9878-7e1285e7b649" />
+)
+![Pending Approvals](<img width="1920" height="1080" alt="pending_approvals" src="https://github.com/user-attachments/assets/6b13c586-bae6-40eb-91c8-8025462f2fa6" />
+)
+![Task Management](<img width="1920" height="1080" alt="task" src="https://github.com/user-attachments/assets/39816348-7f9b-4924-b53d-e51354c7d4fe" />
+)
 
-### 👤 Member Views
-![Member Dashboard](./screenshots/mem_dashboard.png)
-![Member Tasks](./screenshots/mem_task.png)
+### Member Views
+![Member Dashboard](<img width="1920" height="1080" alt="mem_dashboard" src="https://github.com/user-attachments/assets/945cfabd-545d-4cd2-a4f2-a6042a6742f4" />
+)
+![Member Tasks](<img width="1920" height="1080" alt="mem_task" src="https://github.com/user-attachments/assets/d5061ce2-7a0a-4213-a159-82b38fdbbaaf" />
+)
 
 ---
 
-## ⚙️ Installation and Setup
+##  Installation and Setup
 
 **1. Clone the repository:**
 ```bash
@@ -142,7 +150,7 @@ Example backend endpoints:
 
 ---
 
-## 🔮 Future Improvements
+##  Future Improvements
 
 - [ ] Real-time collaboration
 - [ ] Drag-and-drop task cards
@@ -152,7 +160,7 @@ Example backend endpoints:
 
 ---
 
-## 👤 Author
+##  Author
 
 **Mannaswini P A**
 
